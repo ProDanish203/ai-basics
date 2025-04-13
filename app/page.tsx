@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import TranscriptInterface from "@/components/transcript-interface";
+import SummarizePdf from "@/components/summarize-pdf";
 
 export default function Home() {
   return (
@@ -11,10 +12,11 @@ export default function Home() {
       </h1>
 
       <Tabs defaultValue="generate-text" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="generate-text">Generate Text</TabsTrigger>
           <TabsTrigger value="stream-text">Stream Text</TabsTrigger>
           <TabsTrigger value="transcript">Transcript</TabsTrigger>
+          <TabsTrigger value="summarize-pdf">Summarize PDF</TabsTrigger>
         </TabsList>
 
         <TabsContent value="generate-text">
@@ -47,6 +49,16 @@ export default function Home() {
             </p>
           </div>
           <TranscriptInterface />
+        </TabsContent>
+
+        <TabsContent value="summarize-pdf">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold mb-2">Summarize PDF</h2>
+            <p className="text-muted-foreground">
+              Upload PDF files and get AI-generated summaries.
+            </p>
+          </div>
+          <SummarizePdf />
         </TabsContent>
       </Tabs>
     </div>

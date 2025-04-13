@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Message from "@/components/message";
 import { GenerateText } from "@/lib/actions/ai";
 import { useCompletion } from "@ai-sdk/react";
+import { toast } from "sonner";
 
 interface ChatInterfaceProps {
   mode: "generate" | "stream";
@@ -79,6 +80,7 @@ export default function ChatInterface({ mode }: ChatInterfaceProps) {
       }
     } catch (err) {
       console.log(err);
+      toast.error("Error processing the message. Please try again.");
     } finally {
       setIsLoading(false);
     }

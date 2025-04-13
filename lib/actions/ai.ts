@@ -43,6 +43,7 @@ export const GetTranscription = async (audioFile: File) => {
 
   const arrayBuffer = await audioFile.arrayBuffer();
   const base64Audio = Buffer.from(arrayBuffer).toString("base64");
+  console.log("Transcribing audio file:", audioFile.name);
 
   const result = await generateText({
     model: gemini("gemini-2.0-flash-exp"),
@@ -50,7 +51,7 @@ export const GetTranscription = async (audioFile: File) => {
       {
         role: "user",
         content: [
-          { type: "text", text: "What is the file about?" },
+          { type: "text", text: "Transcribe this audio. dont use any other text, the response text should contain only the extracted audio in text form." },
           {
             type: "file",
             mimeType: audioFile.type,

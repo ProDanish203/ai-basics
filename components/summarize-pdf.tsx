@@ -2,56 +2,71 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { Upload, X, FileAudio } from "lucide-react";
+import { useState, useRef } from "react";
+import { Upload, X, FileText } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { GetTranscription } from "@/lib/actions/ai";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 
-export default function TranscriptInterface() {
+export default function SummarizePdf() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [transcript, setTranscript] = useState<string | null>(null);
+  const [summary, setSummary] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setTranscript(null);
+      const selectedFile = e.target.files[0];
+
+      if (selectedFile.type !== "application/pdf") {
+        toast.error("Please upload a PDF file");
+        return;
+      }
+
+      setFile(selectedFile);
+      setSummary("");
     }
   };
 
   const handleRemoveFile = () => {
     setFile(null);
-    setTranscript(null);
+    setSummary("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+
     try {
-      e.preventDefault();
-      if (!file) return;
       setIsProcessing(true);
+      setSummary("");
 
       const formData = new FormData();
       formData.append("file", file);
 
-      const { data } = await axios.post("/api/chat/transcribe", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await fetch("/api/chat/summarize-pdf", {
+        method: "POST",
+        body: formData,
       });
-      if (!data.success)
-        return toast.error(
-          data.message || "Error processing the audio file. Please try again."
-        );
 
-      setTranscript(data.data);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        return toast.error("Error summarizing the PDF. Please try again.");
+      }
+
+      setSummary(data.summary);
     } catch (err) {
-      console.log(err);
-      toast.error("Error processing the audio file. Please try again.");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        console.log("Request was aborted");
+      } else {
+        console.error(err);
+        toast.error("Error summarizing the PDF. Please try again.");
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -65,15 +80,15 @@ export default function TranscriptInterface() {
             <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center">
               {!file ? (
                 <>
-                  <FileAudio className="h-10 w-10 text-muted-foreground mb-2" />
+                  <FileText className="h-10 w-10 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    Upload an audio file to transcribe
+                    Upload a PDF file to summarize
                   </p>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Supports MP3, WAV, M4A (max 25MB)
+                    click to select (max 10MB)
                   </p>
                   <label
-                    htmlFor="file-upload"
+                    htmlFor="pdf-upload"
                     className={cn(
                       buttonVariants({
                         variant: "outline",
@@ -81,12 +96,12 @@ export default function TranscriptInterface() {
                     )}
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Select File
+                    Select PDF
                   </label>
                   <input
-                    id="file-upload"
+                    id="pdf-upload"
                     type="file"
-                    accept="audio/*"
+                    accept="application/pdf"
                     className="hidden"
                     onChange={handleFileChange}
                   />
@@ -95,9 +110,12 @@ export default function TranscriptInterface() {
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <FileAudio className="h-5 w-5 mr-2 text-primary" />
+                      <FileText className="h-5 w-5 mr-2 text-primary" />
                       <span className="text-sm font-medium truncate max-w-[200px]">
                         {file.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground ml-2">
+                        ({(file.size / 1024 / 1024).toFixed(2)} MB)
                       </span>
                     </div>
                     <Button
@@ -115,7 +133,7 @@ export default function TranscriptInterface() {
                     className="w-full"
                     disabled={isProcessing}
                   >
-                    {isProcessing ? "Processing..." : "Transcribe Audio"}
+                    {isProcessing ? "Processing..." : "Summarize PDF"}
                   </Button>
                 </div>
               )}
@@ -124,14 +142,14 @@ export default function TranscriptInterface() {
         </CardContent>
       </Card>
 
-      {transcript && (
+      {(summary || isProcessing) && (
         <Card>
           <CardContent className="pt-6">
-            <h3 className="text-lg font-medium mb-2">Transcript</h3>
+            <h3 className="text-lg font-medium mb-2">Summary</h3>
             <Textarea
-              value={transcript}
+              value={summary || "Processing..."}
               readOnly
-              className="min-h-[200px] resize-none"
+              className="min-h-[300px] resize-none"
             />
           </CardContent>
         </Card>
