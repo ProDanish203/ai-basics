@@ -12,9 +12,8 @@ export default function Home() {
       </h1>
 
       <Tabs defaultValue="generate-text" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
+        <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="generate-text">Generate Text</TabsTrigger>
-          <TabsTrigger value="stream-text">Stream Text</TabsTrigger>
           <TabsTrigger value="transcript">Transcript</TabsTrigger>
           <TabsTrigger value="summarize-pdf">Summarize PDF</TabsTrigger>
         </TabsList>
@@ -28,17 +27,6 @@ export default function Home() {
             </p>
           </div>
           <ChatInterface mode="generate" />
-        </TabsContent>
-
-        <TabsContent value="stream-text">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">Stream Text</h2>
-            <p className="text-muted-foreground">
-              Stream text responses in real-time using the AI SDK's streamText
-              function.
-            </p>
-          </div>
-          <ChatInterface mode="stream" />
         </TabsContent>
 
         <TabsContent value="transcript">

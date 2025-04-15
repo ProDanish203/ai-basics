@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import axios from "axios";
 
 export default function SummarizePdf() {
   const [file, setFile] = useState<File | null>(null);
@@ -45,28 +46,22 @@ export default function SummarizePdf() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/chat/summarize-pdf", {
-        method: "POST",
-        body: formData,
+      const { data } = await axios.post("/api/chat/summarize-pdf", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
       if (!data.success) {
         return toast.error("Error summarizing the PDF. Please try again.");
       }
 
       setSummary(data.summary);
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        console.log("Request was aborted");
-      } else {
-        console.error(err);
-        toast.error("Error summarizing the PDF. Please try again.");
-      }
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.error ||
+          "An error occurred while processing your request."
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -142,12 +137,12 @@ export default function SummarizePdf() {
         </CardContent>
       </Card>
 
-      {(summary || isProcessing) && (
+      {summary && (
         <Card>
           <CardContent className="pt-6">
             <h3 className="text-lg font-medium mb-2">Summary</h3>
             <Textarea
-              value={summary || "Processing..."}
+              value={summary}
               readOnly
               className="min-h-[300px] resize-none"
             />

@@ -24,6 +24,12 @@ export const GenerateText = async (message: string) => {
     prompt: message,
   });
 
+  // const openai = getOpenAI();
+  // const response = await generateText({
+  //   model: openai("gpt-3.5-turbo"),
+  //   prompt: message,
+  // });
+
   return response.text;
 };
 
@@ -51,7 +57,10 @@ export const GetTranscription = async (audioFile: File) => {
       {
         role: "user",
         content: [
-          { type: "text", text: "Transcribe this audio. dont use any other text, the response text should contain only the extracted audio in text form." },
+          {
+            type: "text",
+            text: "Transcribe this audio. dont use any other text, the response text should contain only the extracted audio in text form.",
+          },
           {
             type: "file",
             mimeType: audioFile.type,
