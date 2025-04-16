@@ -18,6 +18,13 @@ export const Navbar = () => {
         >
           chat with PDF
         </Link>
+
+        <Link
+          href="/image-generation"
+          className={cn(buttonVariants({ variant: "outline" }))}
+        >
+          Image Generation
+        </Link>
       </nav>
     </header>
   );
