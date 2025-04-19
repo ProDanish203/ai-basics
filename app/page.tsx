@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatInterface from "@/components/chat-interface";
 import TranscriptInterface from "@/components/transcript-interface";
 import SummarizePdf from "@/components/summarize-pdf";
+import { ToolCalling } from "@/components/tool-calling";
 
 export default function Home() {
   return (
@@ -12,10 +13,11 @@ export default function Home() {
       </h1>
 
       <Tabs defaultValue="generate-text" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="generate-text">Generate Text</TabsTrigger>
           <TabsTrigger value="transcript">Transcript</TabsTrigger>
           <TabsTrigger value="summarize-pdf">Summarize PDF</TabsTrigger>
+          <TabsTrigger value="tool-calling">Tool Calling</TabsTrigger>
         </TabsList>
 
         <TabsContent value="generate-text">
@@ -47,6 +49,19 @@ export default function Home() {
             </p>
           </div>
           <SummarizePdf />
+        </TabsContent>
+
+        <TabsContent value="tool-calling">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold mb-2">
+              Tool Calling and Agents
+            </h2>
+            <p className="text-muted-foreground">
+              Use the AI SDK to call external tools and APIs, enabling advanced
+              interactions and workflows.
+            </p>
+          </div>
+          <ToolCalling />
         </TabsContent>
       </Tabs>
     </div>
