@@ -24,7 +24,12 @@ export async function POST(req: Request) {
       providerOptions: {
         google: { responseModalities: ["TEXT", "IMAGE"] },
       },
-      prompt: `Generate 4 images based on the prompt: ${prompt}`,
+      messages: [
+        {
+          role: "user",
+          content: `You are an AI agent that creates images based on the provided prompt, always create 4 images, do not merge them into a single image, but give exact 4 images in response and keep them separated as well. PROMPT: ${prompt}`,
+        },
+      ],
     });
     const isSuccessResponse =
       result.text.trim() === "" || result.text === "\n\n\n\n";
@@ -66,6 +71,7 @@ export async function POST(req: Request) {
     //   data: images,
     // });
   } catch (err) {
+    console.log(err);
     return NextResponse.json(
       { success: false, error: "Internal Server Error" },
       { status: 500 }
