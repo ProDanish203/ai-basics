@@ -24,7 +24,7 @@ export default function Home() {
           <div className="mb-4">
             <h2 className="text-xl font-semibold mb-2">Generate Text</h2>
             <p className="text-muted-foreground">
-              Generate complete text responses using the AI SDK's generateText
+              Generate complete text responses using the AI SDK&apos;s generateText
               function.
             </p>
           </div>
