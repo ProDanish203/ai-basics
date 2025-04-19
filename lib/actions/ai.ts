@@ -30,7 +30,7 @@ export const GenerateText = async (message: string) => {
   const gemini = getGemini();
   const response = await generateText({
     model: gemini("gemini-2.0-flash-exp"),
-    prompt: message,
+    prompt: `give all the answers in plain text format, do no use any sort of markdown or foramtting, just plain text in the response. PROMPT: ${message}`,
   });
 
   // const openai = getOpenAI();
