@@ -174,7 +174,7 @@ const ChatWithPdfPage = () => {
               <h2 className="font-medium">Chat with PDF</h2>
             </div>
 
-            <div className="flex-1 p-4 overflow-y-auto">
+            <div className="flex-1 p-4 overflow-y-scroll max-h-[70vh]">
               <div className="space-y-4">
                 {messages.map((message) => (
                   <div
